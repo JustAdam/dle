@@ -1,0 +1,4 @@
+gopkg.in/fsnotify.v1
+github.com/ActiveState/tail 068b72961a6bc5b4a82cf4fc14ccc724c0cfa73a
+github.com/BurntSushi/toml 2ceedfee35ad3848e49308ab0c9a4f640cfb5fb2
+github.com/Sirupsen/logrus 2e36101a197f56f60ca6c37c3c256ed3713a9649

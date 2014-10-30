@@ -1,0 +1,9 @@
+ignore = [
+"CONTAINER-ID"
+]
+
+[container.CONTAINER-ID]
+key = "logentries-token"
+
+[container.CONTAINER-ID]
+key = "logentries-token"
