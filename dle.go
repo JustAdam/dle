@@ -390,7 +390,9 @@ func WatchDockerLogDirectory() {
 									"cid":  cid,
 								}).Warn("Error finding log")
 							} else {
+								watchLogs.Lock()
 								watchLogs.AddLog(file)
+								watchLogs.Unlock()
 								go Watch(logLines, watchLogs.Containers[cid])
 							}
 						}
@@ -406,7 +408,9 @@ func WatchDockerLogDirectory() {
 					if c, ok := watchLogs.Containers[cid]; ok {
 						c.Quit <- true
 						<-c.Quit
+						watchLogs.Lock()
 						delete(watchLogs.Containers, cid)
+						watchLogs.Unlock()
 						log.WithFields(log.Fields{
 							"cid": cid,
 						}).Debug("Container log watch removed")
