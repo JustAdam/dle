@@ -1,9 +1,6 @@
-FROM ubuntu:14.04
+FROM busybox:ubuntu-14.04
 
 MAINTAINER JustAdam <adambell7@gmail.com>
-
-RUN apt-get update && \
-    apt-get upgrade -y
 
 ADD dle /usr/bin/dle
 

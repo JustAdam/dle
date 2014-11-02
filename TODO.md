@@ -8,4 +8,3 @@
 * implement Reader/Writer interface where relevant
 * reduce heavy use of globals
 * Code commenting
-* Reduce size of the Docker image (use busybox?)
