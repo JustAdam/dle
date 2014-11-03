@@ -105,19 +105,25 @@ lBlGGSW4gNfL1IYoakRwJiNiqZ+Gb7+6kHDSVneFeO/qJakXzlByjAA6quPbYzSf
 -----END CERTIFICATE-----`
 )
 
-type LogEntriesConnection struct {
+type TLSConnection struct {
 	host string
 	conn *tls.Conn
 }
 
-func (lec *LogEntriesConnection) Connect(host string) (err error) {
-	lec.host = host
+func NewTLSConnection(host string) (*TLSConnection, error) {
+	c := &TLSConnection{}
+	err := c.Connect(host)
+	return c, err
+}
+
+func (c *TLSConnection) Connect(host string) (err error) {
+	c.host = host
 	roots := x509.NewCertPool()
 	if !roots.AppendCertsFromPEM([]byte(rootPEM)) {
 		return errors.New("failed parsing root certificate")
 	}
 
-	lec.conn, err = tls.Dial("tcp", lec.host, &tls.Config{
+	c.conn, err = tls.Dial("tcp", c.host, &tls.Config{
 		RootCAs: roots,
 	})
 	if err != nil {
@@ -126,14 +132,14 @@ func (lec *LogEntriesConnection) Connect(host string) (err error) {
 	return nil
 }
 
-func (lec *LogEntriesConnection) WriteString(s string) (n int, err error) {
-	return io.WriteString(lec.conn, s)
+func (c *TLSConnection) WriteString(s string) (n int, err error) {
+	return io.WriteString(c.conn, s)
 }
 
-func (lec *LogEntriesConnection) Write(p []byte) (nn int, err error) {
-	return lec.conn.Write(p)
+func (c *TLSConnection) Write(p []byte) (nn int, err error) {
+	return c.conn.Write(p)
 }
 
-func (lec *LogEntriesConnection) Close() error {
-	return lec.conn.Close()
+func (c *TLSConnection) Close() error {
+	return c.conn.Close()
 }

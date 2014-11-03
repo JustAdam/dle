@@ -167,8 +167,8 @@ func main() {
 
 	watchLogs = New(configFileLocation)
 
-	lec := &LogEntriesConnection{}
-	if err := lec.Connect(logEntriesHost); err != nil {
+	lec, err := NewTLSConnection(logEntriesHost)
+	if err != nil {
 		log.Fatal("Unable to connect to logentries:", err)
 	}
 	defer lec.Close()
