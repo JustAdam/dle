@@ -165,7 +165,7 @@ func main() {
 
 	go signalHandler()
 
-	watchLogs = NewWatchLogs(configFileLocation)
+	watchLogs = New(configFileLocation)
 
 	lec := &LogEntriesConnection{}
 	if err := lec.Connect(logEntriesHost); err != nil {
@@ -179,7 +179,7 @@ func main() {
 		go WatchDockerLogDirectory()
 	}
 
-	startWatchLogs()
+	watchLogs.Start()
 
 	for {
 		select {
@@ -189,7 +189,7 @@ func main() {
 	}
 }
 
-func NewWatchLogs(file string) (watchLog *WatchLogs) {
+func New(file string) (watchLog *WatchLogs) {
 	watchLog = new(WatchLogs)
 	watchLog.Lock()
 	if _, err := toml.DecodeFile(file, watchLog); err != nil {
@@ -267,8 +267,8 @@ func (wl *WatchLogs) AddLog(file string) {
 	}
 }
 
-func startWatchLogs() {
-	for _, container := range watchLogs.Containers {
+func (wl *WatchLogs) Start() {
+	for _, container := range wl.Containers {
 		go Watch(logLines, container)
 	}
 }
@@ -323,19 +323,19 @@ func signalHandler() {
 	for {
 		select {
 		case <-sigDie:
-			tailCleanup()
+			watchLogs.cleanup()
 			os.Exit(0)
 		case <-sigReload:
-			tailCleanup()
+			watchLogs.cleanup()
 			watchLogs = nil
-			watchLogs = NewWatchLogs(configFileLocation)
-			startWatchLogs()
+			watchLogs = New(configFileLocation)
+			watchLogs.Start()
 		}
 	}
 }
 
-func tailCleanup() {
-	for _, container := range watchLogs.Containers {
+func (wl *WatchLogs) cleanup() {
+	for _, container := range wl.Containers {
 		container.Quit <- true
 		<-container.Quit
 	}
