@@ -27,9 +27,11 @@ const (
 )
 
 var (
+	// Logentries host and port name to connect to.
 	logEntriesHost string
 	// Log to this token for all unknown containers
-	defaultLogKey      string
+	defaultLogKey string
+	// Location to our configuration file (config.toml)
 	configFileLocation string
 	// Location to Docker's container logs
 	logDirectory string
@@ -53,7 +55,8 @@ var (
 	}
 
 	watchLogs *WatchLogs
-	logLines  chan *LogLine
+	// Each watched log will have changes sent here
+	logLines chan *LogLine
 )
 
 type WatchLogs struct {
@@ -315,25 +318,30 @@ func Watch(logline chan<- *LogLine, logfile *LogWatch) {
 }
 
 func signalHandler() {
-	sigDie := make(chan os.Signal, 1)
-	signal.Notify(sigDie, syscall.SIGINT, syscall.SIGTERM)
-	sigReload := make(chan os.Signal, 1)
-	signal.Notify(sigReload, syscall.SIGHUP)
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 
 	for {
 		select {
-		case <-sigDie:
-			watchLogs.cleanup()
-			os.Exit(0)
-		case <-sigReload:
-			watchLogs.cleanup()
-			watchLogs = nil
-			watchLogs = New(configFileLocation)
-			watchLogs.Start()
+		case sig := <-signals:
+			switch sig {
+			case syscall.SIGINT, syscall.SIGTERM:
+				watchLogs.cleanup()
+				os.Exit(0)
+			case syscall.SIGHUP:
+				log.WithFields(log.Fields{
+					"signal": "HUP",
+				}).Info("Reloading configuration")
+				watchLogs.cleanup()
+				watchLogs = nil
+				watchLogs = New(configFileLocation)
+				watchLogs.Start()
+			}
 		}
 	}
 }
 
+// Stop all running tails and cleaup all running tails.
 func (wl *WatchLogs) cleanup() {
 	for _, container := range wl.Containers {
 		container.Quit <- true
