@@ -130,6 +130,10 @@ func (lec *LogEntriesConnection) WriteString(s string) (n int, err error) {
 	return io.WriteString(lec.conn, s)
 }
 
+func (lec *LogEntriesConnection) Write(p []byte) (nn int, err error) {
+	return lec.conn.Write(p)
+}
+
 func (lec *LogEntriesConnection) Close() error {
 	return lec.conn.Close()
 }

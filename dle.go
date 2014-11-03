@@ -184,7 +184,7 @@ func main() {
 	for {
 		select {
 		case line := <-logLines:
-			fmt.Fprintln(lec.conn, line)
+			fmt.Fprintln(lec, line)
 		}
 	}
 }
