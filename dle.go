@@ -6,6 +6,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/ActiveState/tail"
@@ -26,14 +27,19 @@ const (
 )
 
 var (
-	logEntriesHost     string
+	logEntriesHost string
+	// Log to this token for all unknown containers
 	defaultLogKey      string
 	configFileLocation string
-	logDirectory       string
+	// Location to Docker's container logs
+	logDirectory string
+	// Parse the JSON stored in Docker's log files
+	parseDockerLogFormat bool
 	// Location to Docker containers directory
 	watchLogDirectory bool
 	// Our own log level
 	outputLogLevel string
+	// Pattern to find Docker container log files
 	LogFilePattern string = "*/*.log"
 
 	tailConfig = tail.Config{
@@ -69,6 +75,16 @@ type LogLine struct {
 	Name string
 }
 
+type DockerLogEntry struct {
+	Log    string
+	Stream string
+	// ignoring time for now
+}
+
+func (dl *DockerLogEntry) String() string {
+	return fmt.Sprintf("(%s) %s", dl.Stream, dl.Log)
+}
+
 func init() {
 	var tmp string
 
@@ -87,6 +103,12 @@ func init() {
 		tmpb = false
 	}
 	flag.BoolVar(&watchLogDirectory, "watch-ld", tmpb, "Watch the Docker containers directory for new/removed containers")
+
+	tmpb, err = strconv.ParseBool(os.Getenv("DLE_PARSE_DOCKER_LOGS"))
+	if err != nil {
+		tmpb = true
+	}
+	flag.BoolVar(&parseDockerLogFormat, "parse-docker-logs", tmpb, "Parse the Docker log format (false will send the raw log entry)")
 
 	tmp = os.Getenv("DLE_CONFIG_FILE")
 	if tmp == "" {
@@ -162,10 +184,7 @@ func main() {
 	for {
 		select {
 		case line := <-logLines:
-			_, err := lec.WriteString(line.String() + "\n")
-			if err != nil {
-				log.Fatal(err)
-			}
+			fmt.Fprintln(lec.conn, line)
 		}
 	}
 }
@@ -324,7 +343,18 @@ func tailCleanup() {
 }
 
 func (ll *LogLine) String() string {
-	return fmt.Sprintf("%s %s %s", ll.Key, ll.Name, ll.Line.Text)
+	var line string
+	if parseDockerLogFormat {
+		var dlog DockerLogEntry
+		if err := json.Unmarshal([]byte(ll.Line.Text), &dlog); err != nil {
+			log.Warn("Error decoding log:", err)
+			return ""
+		}
+		line = dlog.String()
+	} else {
+		line = ll.Line.Text
+	}
+	return fmt.Sprintf("%s %s %s", ll.Key, ll.Name, line)
 }
 
 func isDir(name string) (bool, error) {
