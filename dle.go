@@ -110,7 +110,7 @@ func init() {
 	}
 	flag.BoolVar(&parseDockerLogFormat, "parse-docker-logs", tmpb, "Parse the Docker log format (false will send the raw log entry)")
 
-	tmp = os.Getenv("DLE_CONFIG_FILE")
+	tmp = os.Getenv("DLE_LOG_ENTRIES_HOST")
 	if tmp == "" {
 		tmp = defaultLogEntriesHost
 	}
