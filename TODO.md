@@ -9,4 +9,4 @@
 * Code commenting
 * Option to create log entries at logentries via the app
 * Check watchLogs is fully concurrent safe (config reload / directoryWatch add & remove)
-* Look into using te Docker API to get log info
+* Use the Docker API to get the logs
