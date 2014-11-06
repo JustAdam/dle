@@ -7,3 +7,6 @@
 * implement Reader/Writer interface where relevant (watchLogs should implement io.Reader)
 * reduce heavy use of globals
 * Code commenting
+* Option to create log entries at logentries via the app
+* Check watchLogs is fully concurrent safe (config reload / directoryWatch add & remove)
+* Look into using te Docker API to get log info
