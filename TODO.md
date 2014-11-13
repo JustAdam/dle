@@ -1,12 +1,7 @@
 * unit tests
-* Relook at implementation of AddLog()
-* General refactoring, code cleanup & seperation
-* Templating options for log output (String methods / that which is sent to logentries)
-* Tail: seek to last read position when reloading config file
-* Change logger in tail to our logger
-* implement Reader/Writer interface where relevant (watchLogs should implement io.Reader)
-* reduce heavy use of globals
-* Code commenting
+* Templating options for log output (that which is sent to logentries)
 * Option to create log entries at logentries via the app
-* Check watchLogs is fully concurrent safe (config reload / directoryWatch add & remove)
-* Use the Docker API to get the logs
+* Signal handling?
+* Rewatching all containers - possibility to quit AddContainer
+* Network connection management - handle dropped connections
+* Min API version
