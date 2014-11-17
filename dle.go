@@ -69,6 +69,9 @@ func (lw *LogWatcher) AddContainer(cid string) {
 	}
 
 	if os.Expand("$DLE_IGNORE", envExpand) != "" {
+		log.WithFields(log.Fields{
+			"ID": cid,
+		}).Info("Ignoring container")
 		return
 	}
 
