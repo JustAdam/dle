@@ -9,6 +9,7 @@ import (
 	"crypto/x509"
 	"errors"
 	"io"
+	"time"
 )
 
 const (
@@ -112,12 +113,12 @@ type TLSConnection struct {
 
 func NewTLSConnection(host string) (*TLSConnection, error) {
 	c := &TLSConnection{}
-	err := c.Connect(host)
+	c.host = host
+	err := c.Connect()
 	return c, err
 }
 
-func (c *TLSConnection) Connect(host string) (err error) {
-	c.host = host
+func (c *TLSConnection) Connect() (err error) {
 	roots := x509.NewCertPool()
 	if !roots.AppendCertsFromPEM([]byte(rootPEM)) {
 		return errors.New("failed parsing root certificate")
@@ -129,6 +130,7 @@ func (c *TLSConnection) Connect(host string) (err error) {
 	if err != nil {
 		return err
 	}
+	c.conn.SetWriteDeadline(time.Time{})
 	return nil
 }
 
@@ -136,7 +138,7 @@ func (c *TLSConnection) WriteString(s string) (n int, err error) {
 	return io.WriteString(c.conn, s)
 }
 
-func (c *TLSConnection) Write(p []byte) (nn int, err error) {
+func (c *TLSConnection) Write(p []byte) (n int, err error) {
 	return c.conn.Write(p)
 }
 
