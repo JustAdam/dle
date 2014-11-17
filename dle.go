@@ -202,6 +202,13 @@ func main() {
 	}
 
 	for l := range logwatcher.LogLines {
-		lec.Write(l)
+		if _, err := lec.Write(l); err != nil {
+			log.Warn("Connection lost, attempting reconnect")
+			if err := lec.Connect(); err != nil {
+				// @todo: store timestamp, current position so we can resend the logs
+				log.Fatal("Unable to reconnect:", err)
+			}
+			lec.Write(l)
+		}
 	}
 }
