@@ -4,7 +4,7 @@ MAINTAINER JustAdam <adambell7@gmail.com>
 
 ADD dle /usr/bin/dle
 
-VOLUME ["/docker-containers", "/etc/dle/"]
+VOLUME ["/etc/dle/"]
 
 WORKDIR /etc/dle/
 
