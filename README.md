@@ -1,6 +1,8 @@
 DLE (docker logentries)
 -----------------------
 
+[![Build Status](https://travis-ci.org/JustAdam/dle.svg)](https://travis-ci.org/JustAdam/dle)
+
 A client to send your Docker logs to logentries.com.
 
 ## Requirements
