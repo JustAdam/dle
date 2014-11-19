@@ -19,6 +19,8 @@ const (
 	defaultLogEntriesHost string = "data.logentries.com:20000"
 	//
 	defaultDockerEndpoint string = "unix:///var/run/docker.sock"
+	//
+	defaultCertsPemFile string = "certs.pem"
 )
 
 var (
@@ -30,6 +32,8 @@ var (
 	dockerEndpoint string
 	// Use this token for all containers found without DLE_TOKEN
 	defaultToken string
+	// Location to certificates file
+	certsPemFile string
 )
 
 type LogWriter struct {
@@ -145,6 +149,12 @@ func init() {
 		tmp = defaultLogEntriesHost
 	}
 	flag.StringVar(&logEntriesHost, "le-host", tmp, "host:port address to logentries")
+
+	tmp = os.Getenv("DLE_PEM_FILE")
+	if tmp == "" {
+		tmp = defaultCertsPemFile
+	}
+	flag.StringVar(&certsPemFile, "pem-file", tmp, "Location to logentries's certificate pem file")
 
 	tmp = os.Getenv("DLE_LOG_LEVEL")
 	if tmp == "" {

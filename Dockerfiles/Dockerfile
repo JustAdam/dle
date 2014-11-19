@@ -3,9 +3,8 @@ FROM busybox:ubuntu-14.04
 MAINTAINER JustAdam <adambell7@gmail.com>
 
 ADD dle /usr/bin/dle
-
-VOLUME ["/etc/dle/"]
+ADD certs.pem /etc/dle/certs.pem
 
 WORKDIR /etc/dle/
 
-CMD ["/usr/bin/dle"]
+ENTRYPOINT ["/usr/bin/dle"]
