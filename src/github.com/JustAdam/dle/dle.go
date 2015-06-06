@@ -18,7 +18,7 @@ const (
 	// Only SSL connections are supported
 	defaultLogEntriesHost string = "data.logentries.com:20000"
 	//
-	defaultDockerEndpoint string = "unix:///var/run/docker.sock"
+	defaultDockerHost string = "unix:///var/run/docker.sock"
 	//
 	defaultCertsPemFile string = "certs.pem"
 )
@@ -29,7 +29,7 @@ var (
 	// DLE's logging level
 	outputLogLevel string
 	// How to connect to the Docker host
-	dockerEndpoint string
+	dockerHost string
 	// Use this token for all containers found without DLE_TOKEN
 	defaultToken string
 	// Location to certificates file
@@ -138,11 +138,11 @@ func init() {
 
 	var tmp string
 
-	tmp = os.Getenv("DOCKER_ENDPOINT")
+	tmp = os.Getenv("DOCKER_HOST")
 	if tmp == "" {
-		tmp = defaultDockerEndpoint
+		tmp = defaultDockerHost
 	}
-	flag.StringVar(&dockerEndpoint, "docker-endpoint", tmp, "How to connect to the docker host")
+	flag.StringVar(&dockerHost, "docker-host", tmp, "How to connect to the docker host")
 
 	tmp = os.Getenv("DLE_LOG_ENTRIES_HOST")
 	if tmp == "" {
@@ -191,7 +191,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	client, err := docker.NewClient(dockerEndpoint)
+	client, err := docker.NewClient(dockerHost)
 	if err != nil {
 		log.Fatal(err)
 	}

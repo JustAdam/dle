@@ -1,24 +1,18 @@
-TARGET = Dockerfiles/dle
 GITTAG = `git describe --tags --abbrev=0 | sed 's/^v//' | sed 's/\+.*$$//'`
 
-.PHONEY: getdeps clean install
-
-getdeps: 
-	source gvp
-	gmp install
+.PHONEY: clean
 
 test:
-	go vet
-	go test -covermode=count ./...
+	go vet ./...
+	gb test
 
 clean:
-	rm -f $(TARGET)
-	go clean
+	go clean ./...
 
 build: clean
-	go build -a -ldflags "-s" -o $(TARGET) dle.go tls.go
+	gb build -ldflags "-s"
 
 docker: build
-	chmod +x $(TARGET)
+	mv bin/dle Dockerfiles
 	cd Dockerfiles
 	docker build -t justadam/dle:$(GITTAG) .

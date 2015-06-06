@@ -1,0 +1,19 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/Sirupsen/logrus",
+			"repository": "https://github.com/Sirupsen/logrus",
+			"revision": "2e36101a197f56f60ca6c37c3c256ed3713a9649",
+			"branch": "HEAD",
+			"path": ""
+		},
+		{
+			"importpath": "github.com/fsouza/go-dockerclient",
+			"repository": "https://github.com/fsouza/go-dockerclient",
+			"revision": "7b927cb79baf026dd14d1c507033c33e5cf74eed",
+			"branch": "master",
+			"path": ""
+		}
+	]
+}
