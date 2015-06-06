@@ -1,3 +1,2 @@
-Dockerfiles/dle
-bin/
-pkg/
+bin/*
+pkg/*
