@@ -67,13 +67,9 @@ $ docker run -d --name your-container -e DLE_IGNORE=true you/container:latest
 ## Building
 
 - Check out this repository
-- Install gvp and gpm (used for package management)
+- Install gb
 
 ```
-$ gvp init
-$ source gvp in
-$ gpm install
-$ go build -ldflags="-s" -o dle dle.go tls.go
-$ chmod +x dle
-$ mv dle /usr/bin/dle
+$ make build
+$ mv bin/dle /usr/bin/dle
 ```
